@@ -4,7 +4,7 @@
 function TableMenu {
     while [ true ]
     do
-        echo "--------------MENU---------------"
+        echo -e "\n--------------MENU---------------"
         select Menu in "Create New Table" "List Tables" "Drop Table" "Insert Into Table" "Select From Table" "Delete From Table" "Update Table" "Exit"
         do
             case $Menu in

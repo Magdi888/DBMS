@@ -66,8 +66,16 @@ function SelectFromTable {
 			break;;
 			"Column")
 			clear
-			'read -p "Enter your column: " record
-			sed -n "/$record/p" $1'
+			read -p "Enter your Column Name: " col
+			exist=$(awk  -F : '{if($1 == "'$col'")print $0 }' $1.meta)
+			if [ $? == 0 ]
+			then
+					echo "Column Exist"
+					(( number=$(awk  -F : '{if($1 == "'$col'")print NR }' $1.meta) -1 ))
+					awk -F : '{print $'$number' }' $1 
+			else
+					echo "Column $col Does Not Exist"
+			fi
 			break;;
 		    * )
 			echo "Invalid Choice"
@@ -81,4 +89,9 @@ function SelectFromTable {
     else
         echo "You Can Not Delete More Than One table"
     fi
+}
+
+
+
+
 }
