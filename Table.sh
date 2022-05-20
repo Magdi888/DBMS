@@ -1,5 +1,6 @@
 #!/bin/bash
 . CreateTable.sh
+. TableBaseFunc.sh
 function TableMenu {
     while [ true ]
     do
@@ -18,6 +19,7 @@ function TableMenu {
                 break;;
                 "Drop Table" )
 		clear
+                read -p "Enter Table Name: " Table
                 DropTable $Table
                 break;;
                 "Insert Into Table" )
@@ -28,7 +30,7 @@ function TableMenu {
                 "Select From Table" )
 		clear
                 read -p "Enter Table name: " Table
-                SelectTable $Table
+                SelectFromTable $Table
                 break;;
                 "Delete From Table" )
 		clear
@@ -51,5 +53,4 @@ function TableMenu {
             esac
         done
     done
-    
 }

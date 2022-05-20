@@ -1,2 +1,3 @@
 Field:Type:PK
-ahmed:Integer:Yes
+id:Integer:Yes
+name:String:
