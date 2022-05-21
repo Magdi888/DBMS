@@ -157,6 +157,20 @@ function InsertTable {
     fi
 }
 
-
+function DeleteFromTable {
+	#Enter Column Value
+	read -p "Enter Table Column: " colm 
+	# elmafrod hna ha3ml check 3la el column da existed wala l2
+	# Define Table column index in meta table file
+	(( ColIndex=$(awk -F: '{if($1=="Yes")print NR-1}' $1.meta) ))
+	read -p "Enter your value: " record
+	# elmafrod hna ha3ml check 3la el column da existed wala l2
+	# delete this row
+	#first option using sed inside awk
+	awk -F: '{if($'$ColIndex'=='$record') $(sed -i "/'$record'/d")}' $1
+	#second option using expression '!/pattern/' in awk and redirect the output
+	#awk -F : '!/nada/' $1
+	awk -F : '{if($'$ColIndex'=='$record')}{ "!/'$record'/ "}'$1
+}
 
 
