@@ -187,4 +187,55 @@ function DeleteFromTable {
 	fi
 }
 
+function UpdateTable {
+	if [ $# -eq 1 ]
+    then
+        if [ -f $1 ]
+        then
+			read -p "Enter the Column Name : " ColName
+			exist=$(awk  -F : -v c=$ColName '{if($1 == c)print $0 }' $1.meta)
+			if ! [[ $exist == "" ]]
+			then
+				(( num=$(awk  -F : -v c=$ColName '{if($1 == c)print NR }' $1.meta) -1 ))
+				 read -p "Enter the Value Condition : " Val
+				 in=$(awk  -F : -v c=$Val '{if($'$num' == c)print $0 }' $1)
+				 if ! [[ $in == "" ]]
+				 then
+					 read -p "Enter Column Name to Set: " Cond
+					 exist=$(awk  -F : -v c=$Cond '{if($1 == c)print $0 }' $1.meta)
+					 type=$(awk  -F : -v c=$Cond '{if($1 == c)print $2 }' $1.meta)
+					 if ! [[ $exist == "" ]]
+					 then
+					 (( num1=$(awk  -F : -v c=$Cond '{if($1 == c)print NR }' $1.meta) -1 ))
+					 	read -p "Enter the New Value Condition : " NewVal
+						 if [[ $type == "Integer"]]
+						 then
+						 	if ! [[ $NewVal =~ ^[0-9]+$]]
+							 then
+							 	echo "Invailed Input"
+							 fi
+						 elif [[ $type == "Sting" ]]
+						 then
+						 	if ! [[ $NewVal =~ ^[a-zA-Z]+$ ]]
+							 then
+							 	echo "Invailed Input"
+				 			 fi
+						 else
+						 fi
+
+				 	fi
+			else
+				echo "column not found"
+			fi
+		else
+			echo "table not found"
+		fi
+	else
+		echo "table not found"
+	fi
+
+
+
+}
+
 
