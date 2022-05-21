@@ -67,11 +67,11 @@ function SelectFromTable {
 			"Column")
 			clear
 			read -p "Enter your Column Name: " col
-			exist=$(awk  -F : '{if($1 == "'$col'")print $0 }' $1.meta)
+			exist=$(awk  -F : -v c=$col '{if($1 == c)print $0 }' $1.meta)
 			if [ $? == 0 ]
 			then
 					echo "Column Exist"
-					(( number=$(awk  -F : '{if($1 == "'$col'")print NR }' $1.meta) -1 ))
+					(( number=$(awk  -F : -v c=$col '{if($1 == c)print NR }' $1.meta) -1 ))
 					awk -F : '{print $'$number' }' $1 
 			else
 					echo "Column $col Does Not Exist"
@@ -90,8 +90,70 @@ function SelectFromTable {
         echo "You Can Not Delete More Than One table"
     fi
 }
-
-
-
-
+function InsertTable {
+	if [ $# -eq 1 ]
+    then
+        if [ -f $1 ]
+        then
+			(( column=$(awk 'END{print NR}' $1.meta) -1 ))
+			typeset -i x
+			x=1
+			TableContent=""
+			ColumnSep=":"
+			RowSep="\n"
+			ArrField=($(cat $1.meta | awk -F: '{ print $1 }'))
+			ArrType=($(cat $1.meta | awk -F: '{ print $2 }'))
+			ArrPK=($(cat $1.meta | awk -F: '{ print $3 }'))
+			while [[ $x -le $column ]]
+			do
+				read -p "Enter Value for parameter ${ArrField[x]} :${ArrType[x]}:" TableParameter
+				# Check input type
+				if [[ ${ArrType[x]} == "Integer" ]]
+				then
+					if ! [[ $TableParameter =~ ^[0-9]+$ ]]
+					then 
+						echo "Invalid Integer"
+						continue
+					fi
+				elif [[ ${ArrType[x]} == "String" ]]
+				then
+					if ! [[ $TableParameter =~ ^[a-zA-Z]+$ ]]
+					then
+						echo "Invalid String"
+						continue
+					fi
+				fi
+				# Check PK input in table
+				if [[ ${ArrPK[x]} == "Yes" ]]
+				then
+						# in case if it is primary key we have to make sure that the value are unique
+						if [[ $TableParameter =~ ^[$(awk -F : '{print $'$x'}' $1)]$ ]]
+						then
+							echo "---------------------------------"
+							echo "Error: Value duplication in Primary Key! "
+							echo "---------------------------------"
+							echo "Please Try Again"
+							continue
+						fi
+				fi
+				if [[ $x == $column ]]
+				then
+					TableContent+=$TableParameter
+				else
+					TableContent+=$TableParameter$ColumnSep
+				fi
+				(( x++ ))
+			done
+			echo  "$TableContent" >> $1 
+        else
+            echo "This is not a valid table name"
+            echo "Please try again with the right name"
+        fi
+    else
+        echo "You Can Not Insert More Than One table"
+    fi
 }
+
+
+
+
