@@ -188,44 +188,67 @@ function DeleteFromTable {
 }
 
 function UpdateTable {
+	# Check table parameter if input is more than one table
 	if [ $# -eq 1 ]
     then
+	# Check if table is existed
         if [ -f $1 ]
         then
-			read -p "Enter the Column Name : " ColName
-			exist=$(awk  -F : -v c=$ColName '{if($1 == c)print $0 }' $1.meta)
+			# where cause presentation -> put the condition (column index)
+			read -p "Enter where cause condition : " whereCon
+			# intiate where cause parameters ()
+			exist=$(awk  -F : -v c=$whereCon '{if($1 == c)print $0 }' $1.meta)
+			# if where cause condition -> where cause column value
 			if ! [[ $exist == "" ]]
 			then
-				(( num=$(awk  -F : -v c=$ColName '{if($1 == c)print NR }' $1.meta) -1 ))
-				 read -p "Enter the Value Condition : " Val
+				# Check where cause index in meta file
+				(( num=$(awk  -F : -v c=$whereCon '{if($1 == c)print NR }' $1.meta) -1 ))
+				# Set the old Value
+				 read -p "Enter the Old Value : " Val
+				# Check if old variable is existed in the column itself -> bring the variable itself
 				 in=$(awk  -F : -v c=$Val '{if($'$num' == c)print $0 }' $1)
+				# Check if variable is existed in the row itself -> bring variable index we will need it in sed
+				 rowIndex=$(awk  -F : -v c=$Val '{if($'$num' == c)print $NR }' $1)
 				 if ! [[ $in == "" ]]
 				 then
-					 read -p "Enter Column Name to Set: " Cond
-					 exist=$(awk  -F : -v c=$Cond '{if($1 == c)print $0 }' $1.meta)
-					 type=$(awk  -F : -v c=$Cond '{if($1 == c)print $2 }' $1.meta)
-					 if ! [[ $exist == "" ]]
+				 	# set the column name
+					 read -p "Enter column name: " columnName
+					# intiate column parameters ()
+					 ColumnExist=$(awk  -F : -v c=$columnName '{if($1 == c)print $0 }' $1.meta)
+					 type=$(awk  -F : -v c=$columnName '{if($1 == c)print $2 }' $1.meta)
+					# 
+					 if ! [[ $ColumnExist == "" ]]
 					 then
-					 (( num1=$(awk  -F : -v c=$Cond '{if($1 == c)print NR }' $1.meta) -1 ))
-					 	read -p "Enter the New Value Condition : " NewVal
-						 if [[ $type == "Integer"]]
-						 then
-						 	if ! [[ $NewVal =~ ^[0-9]+$]]
-							 then
-							 	echo "Invailed Input"
-							 fi
-						 elif [[ $type == "Sting" ]]
-						 then
-						 	if ! [[ $NewVal =~ ^[a-zA-Z]+$ ]]
-							 then
-							 	echo "Invailed Input"
-				 			 fi
-						 else
-						 fi
-
-				 	fi
+					 	# Check column index in meta file
+						(( ColumnIndex=$(awk  -F : -v c=$columnName '{if($1 == c)print NR }' $1.meta) -1 ))
+						# set the new/update value
+						read -p "Enter the New Value: " NewVal
+						# check value type
+						if [[ $type == "Integer" ]]
+						then
+							# in case integer -> check input is number
+							if ! [[ $NewVal =~ ^[0-9]+$ ]]
+							then
+								echo "Invailed Input"
+							fi
+						elif [[ $type == "Sting" ]]
+						then
+							# in case string -> check input is word
+							if ! [[ $NewVal =~ ^[a-zA-Z]+$ ]]
+							then
+								echo "Invailed Input"
+							fi
+						fi
+						sed -i ''$rowIndex's/'$Val'/'$NewVal'/g' $1
+						echo "update success"
+					else
+						echo "Invalid"
+					fi
+				else
+				 	echo "old variable not found"
+				fi
 			else
-				echo "column not found"
+				echo "column in where cause not found"
 			fi
 		else
 			echo "table not found"
@@ -233,9 +256,4 @@ function UpdateTable {
 	else
 		echo "table not found"
 	fi
-
-
-
 }
-
-
