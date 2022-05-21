@@ -71,7 +71,7 @@ function SelectFromTable {
 			clear
 			read -p "Enter your Column Name: " col
 			exist=$(awk  -F : -v c=$col '{if($1 == c)print $0 }' $1.meta)
-			if [ $? == 0 ]
+			if ! [[ $exist == "" ]]
 			then
 					echo "Column Exist"
 					(( number=$(awk  -F : -v c=$col '{if($1 == c)print NR }' $1.meta) -1 ))
@@ -158,19 +158,33 @@ function InsertTable {
 }
 
 function DeleteFromTable {
-	#Enter Column Value
-	read -p "Enter Table Column: " colm 
-	# elmafrod hna ha3ml check 3la el column da existed wala l2
-	# Define Table column index in meta table file
-	(( ColIndex=$(awk -F: '{if($1=="Yes")print NR-1}' $1.meta) ))
-	read -p "Enter your value: " record
-	# elmafrod hna ha3ml check 3la el column da existed wala l2
-	# delete this row
-	#first option using sed inside awk
-	awk -F: '{if($'$ColIndex'=='$record') $(sed -i "/'$record'/d")}' $1
-	#second option using expression '!/pattern/' in awk and redirect the output
-	#awk -F : '!/nada/' $1
-	awk -F : '{if($'$ColIndex'=='$record')}{ "!/'$record'/ "}'$1
+	if [ $# -eq 1 ]
+    then
+        if [ -f $1 ]
+        then
+			read -p "Enter the Column Name: " ColName
+			exist=$(awk  -F : -v c=$ColName '{if($1 == c)print $0 }' $1.meta)
+			if ! [[ $exist == "" ]]
+			then
+				 read -p "Enter Delete Condition: " Cond
+				 (( num=$(awk  -F : -v c=$ColName '{if($1 == c)print NR }' $1.meta) -1 ))
+				 ind=$(awk -F : -v x=$Cond '{if($'$num' == x) print NR}' $1) 
+				 if ! [[ $ind == "" ]]
+				 then
+				 	sed -i ''$ind'd' $1
+					echo "Row $ind is deleted"
+				 else
+				 	echo "Value not found"
+				 fi
+			else
+				echo "column not found"
+			fi
+		else
+			echo "table not found"
+		fi
+	else
+		echo "table not found"
+	fi
 }
 
 
