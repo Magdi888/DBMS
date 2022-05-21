@@ -61,8 +61,11 @@ function SelectFromTable {
 			break;;
 		    "Record" )
 			clear
+			# Define Primary Key index in meta table file
+			(( PKindex=$(awk -F: '{if($3=="Yes")print NR-1}' $1.meta) ))
 			read -p "Enter your Primary Key Value: " record
-			sed -n "/$record/p" $1
+			# print the existing record
+			awk -F: '{if($'$PKindex'=='$record')print $0}' $1
 			break;;
 			"Column")
 			clear
@@ -126,7 +129,7 @@ function InsertTable {
 				# Check PK input in table
 				if [[ ${ArrPK[x]} == "Yes" ]]
 				then
-						# in case if it is primary key we have to make sure that the value are unique
+						# in case if it is primary key we have to make sure the value are unique
 						if [[ $TableParameter =~ ^[$(awk -F : '{print $'$x'}' $1)]$ ]]
 						then
 							echo "---------------------------------"
