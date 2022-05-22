@@ -188,6 +188,12 @@ function DeleteFromTable {
 }
 
 function UpdateTable {
+	:'
+	  SQL EXAMPLE
+	  UPDATE stuff
+	  SET id=8
+	  WHERE last_name=ali
+	'
 	# Check table parameter if input is more than one table
 	if [ $# -eq 1 ]
     then
@@ -195,16 +201,16 @@ function UpdateTable {
         if [ -f $1 ]
         then
 			# where cause presentation -> put the condition (column index)
-			read -p "Enter where cause condition : " whereCon
-			# intiate where cause parameters ()
+			read -p "Enter where cause condition (column name) : " whereCon
+			# serach for where cause parameters in meta table ()
 			exist=$(awk  -F : -v c=$whereCon '{if($1 == c)print $0 }' $1.meta)
-			# if where cause condition -> where cause column value
+			# if where cause/where cause column value existed
 			if ! [[ $exist == "" ]]
 			then
 				# Check where cause index in meta file
 				(( num=$(awk  -F : -v c=$whereCon '{if($1 == c)print NR }' $1.meta) -1 ))
 				# Set the old Value
-				 read -p "Enter the Old Value : " Val
+				 read -p "Enter the where cause Value : " Val
 				# Check if old variable is existed in the column itself -> bring the variable itself
 				 in=$(awk  -F : -v c=$Val '{if($'$num' == c)print $0 }' $1)
 				# Check if variable is existed in the row itself -> bring variable index we will need it in sed
@@ -212,7 +218,7 @@ function UpdateTable {
 				 if ! [[ $in == "" ]]
 				 then
 				 	# set the column name
-					 read -p "Enter column name: " columnName
+					 read -p "Enter column name (what you will update): " columnName
 					# intiate column parameters ()
 					 ColumnExist=$(awk  -F : -v c=$columnName '{if($1 == c)print $0 }' $1.meta)
 					 type=$(awk  -F : -v c=$columnName '{if($1 == c)print $2 }' $1.meta)
@@ -221,8 +227,10 @@ function UpdateTable {
 					 then
 					 	# Check column index in meta file
 						(( ColumnIndex=$(awk  -F : -v c=$columnName '{if($1 == c)print NR }' $1.meta) -1 ))
+						# Detect the old value: the one which will be replaced
+						old=$(awk -F : -v c=$rowIndex '{if(NR == c) print $'$ColumnIndex'}' $1)
 						# set the new/update value
-						read -p "Enter the New Value: " NewVal
+						read -p "Enter the new Value (Final value): " NewVal
 						# check value type
 						if [[ $type == "Integer" ]]
 						then
@@ -231,7 +239,7 @@ function UpdateTable {
 							then
 								echo "Invailed Input"
 							fi
-						elif [[ $type == "Sting" ]]
+						elif [[ $type == "String" ]]
 						then
 							# in case string -> check input is word
 							if ! [[ $NewVal =~ ^[a-zA-Z]+$ ]]
@@ -239,8 +247,10 @@ function UpdateTable {
 								echo "Invailed Input"
 							fi
 						fi
-						sed -i ''$rowIndex's/'$Val'/'$NewVal'/g' $1
+
+						sed -i ''$rowIndex's/'$old'/'$NewVal'/g' $1
 						echo "update success"
+
 					else
 						echo "Invalid"
 					fi
