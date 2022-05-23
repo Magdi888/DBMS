@@ -188,48 +188,66 @@ function DeleteFromTable {
 }
 
 function UpdateTable {
+	echo "----------------------------"
+	echo "----------------------------"
+	echo -e "Example: \n       UPDATE table_name\n       SET column_update_name = update_value\n       WHERE where_column_condition= where_condition_value"
+	echo "----------------------------"
+	echo "----------------------------"
+	# Check table parameter if input is more than one table
 	if [ $# -eq 1 ]
     then
+		# Check if table is existed
         if [ -f $1 ]
         then
-			read -p "Enter the Column Name Condition : " ColName
+			# where clause presentation -> put the condition (column index)
+			read -p "Enter where column condition (column name) : " ColName
+			# serach for where clause parameters in meta table ()
 			exist=$(awk  -F : -v c=$ColName '{if($1 == c)print $0 }' $1.meta)
+			# if where clause/where cause column value existed
 			if ! [[ $exist == "" ]]
 			then
+				# Check where clause index in meta file
 				(( num=$(awk  -F : -v c=$ColName '{if($1 == c)print NR }' $1.meta) -1 ))
-				 read -p "Enter the Value Condition : " Val
+				# Set the old Value in where
+				 read -p "Enter where condition Value : " Val
+				# Check if old variable is existed in the column itself -> bring the variable itself
 				 in=$(awk  -F : -v c=$Val '{if($'$num' == c)print $0 }' $1)
-				 echo $in
+				# Check if variable is existed in the row itself -> bring variable index we will need it in sed 
 				 where=$(awk -F : -v c=$Val '{if($'$num' == c)print NR }' $1)
-				 echo $where
 				if ! [[ $in == "" ]]
 				then
-					 read -p "Enter Column Name to Set: " Cond
+					# set the column name
+					 read -p "Enter column update name (what you will update): " Cond
+					 # intiate column parameters ()
 					 exist=$(awk  -F : -v c=$Cond '{if($1 == c)print $0 }' $1.meta)
 					 type=$(awk  -F : -v c=$Cond '{if($1 == c)print $2 }' $1.meta)
 					if ! [[ $exist == "" ]]
 					then
+						# Check column index in meta file
 						(( num1=$(awk  -F : -v c=$Cond '{if($1 == c)print NR }' $1.meta) -1 ))
-						echo $num1
-						echo $where
+						# Detect the old value: the one which will be replaced
 						old=$(awk -F : -v c=$where '{if(NR == c) print $'$num1'}' $1)
-						echo $old
-					 	read -p "Enter the New Value : " NewVal
+						# set the new/update value
+					 	read -p "Enter the updated Value (Final value): " NewVal
+						# check value type
 						if [[ $type == "Integer" ]]
 						then
+							# in case integer -> check input is a number
 						 	if ! [[ $NewVal =~ ^[0-9]+$ ]]
 							then
 							 	echo "Invailed Input"
 							fi
 						elif [[ $type == "Sting" ]]
 						then
+							# in case string -> check input is a word
 						 	if ! [[ $NewVal =~ ^[a-zA-Z]+$ ]]
 							then
 							 	echo "Invailed Input"
 				 			fi
 						fi
-						 sed -i ''$where's/'$old'/'$NewVal'/g' $1
-						 echo "update success"
+						# substitute the old value with the new one with respect to where row index
+						sed -i ''$where's/'$old'/'$NewVal'/g' $1
+						echo "update success"
 					else
 					 	echo "Target column does not exist"
 				 	fi
@@ -245,9 +263,6 @@ function UpdateTable {
 	else
 		echo "table not found"
 	fi
-
-
-
 }
 
 
