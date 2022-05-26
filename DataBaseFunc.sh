@@ -2,6 +2,7 @@
 . Table.sh
 function showDatabases {
 	list=$(ls DB | wc -l)
+    # Check if it is empty or not
 	if [[ $list == 0 ]]
 	then
 		echo "Empty"

@@ -1,8 +1,6 @@
 #!/bin/bash
-# error el sourcing "Segmentation fault (core dumped)"
 #. DataBaseFunc.sh
 function DropTable {
-    # 3ayz agyb el parameter DB mn gwa DataBaseFunc.sh
     TableName=$1
     if [ $# -eq 1 ]
     then
@@ -35,7 +33,7 @@ function DropTable {
 }
 
 function ListTables {
-# list the current tables with exception to meta file using grep -v (verse)
+	# list the current tables with exception to meta file using grep -v (verse)
 	list=$(ls  | grep -v meta | wc -l)
 	if [[ $list == 0 ]]
 	then
@@ -46,7 +44,6 @@ function ListTables {
 }
 
 function SelectFromTable {
-	# 3ayz agyb el parameter DB mn gwa DataBaseFunc.sh
     TableName=$1
     if [ $# -eq 1 ]
     then
@@ -74,6 +71,7 @@ function SelectFromTable {
 			if ! [[ $exist == "" ]]
 			then
 					echo "Column Exist"
+					# get row index in meta file == column index in data file
 					(( number=$(awk  -F : -v c=$col '{if($1 == c)print NR }' $1.meta) -1 ))
 					awk -F : '{print $'$number' }' $1 
 			else
@@ -98,6 +96,7 @@ function InsertTable {
     then
         if [ -f $1 ]
         then
+			# how many column we have 
 			(( column=$(awk 'END{print NR}' $1.meta) -1 ))
 			typeset -i x
 			x=1

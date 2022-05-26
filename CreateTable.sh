@@ -24,8 +24,10 @@ function CreateTable {
 
 function CreateTableValue {
     read -p "Enter Column Number: " ColumnNumber
+    # Check if it is a number
     if [[ $ColumnNumber =~ ^[0-9]+$ ]]
     then
+        # if it is not equal to zero
 	    if [[ $ColumnNumber != 0 ]]
 	    then
 
@@ -37,9 +39,12 @@ function CreateTableValue {
     metaData="Field"$columnDelimiter"Type"$columnDelimiter"PK"
     while [[ counter -le ColumnNumber ]]
     do
+        # Enter column name
         read -p "Enter column Name: " ColumnName
+    # check if it is all string 
 	if [[ $ColumnName =~ ^[a-zA-Z] ]]
 	then
+        # Select variable type
         echo "----Select Column Type----"
         select x in "Integer" "String"
         do
@@ -54,6 +59,7 @@ function CreateTableValue {
                 echo "Invalid Type"
             esac
         done
+        # Set the primary key
         if [[ $ColumnPK == "" ]]
         then
             echo " Is it a PK? "
@@ -73,6 +79,7 @@ function CreateTableValue {
                 esac
             done
         else
+        # Code is designed for only one PK per table in case if you select primary key once, you don't have to go to select menu again
             metaData+=$rowSperator$ColumnName$columnDelimiter$ColumnType$columnDelimiter""
         fi
         (( counter++ ))
