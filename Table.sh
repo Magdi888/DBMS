@@ -51,7 +51,6 @@ function TableMenu {
 		"Exit")
 		clear
 		cd ../..
-		pwd
 		break 2 ;;
                 * )
 		clear
