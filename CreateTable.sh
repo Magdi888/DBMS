@@ -39,9 +39,7 @@ function CreateTableValue {
     metaData="Field"$columnDelimiter"Type"$columnDelimiter"PK"
     while [[ counter -le ColumnNumber ]]
     do
-        # Enter column name
-        read -p "Enter column Name: " ColumnName
-    # check if it is all string 
+        read -p "Enter column Name $counter : " ColumnName
 	if [[ $ColumnName =~ ^[a-zA-Z] ]]
 	then
         # Select variable type

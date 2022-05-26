@@ -1,6 +1,12 @@
 #!/bin/bash
 . CreateTable.sh
-. TableBaseFunc.sh
+. DropTable.sh
+. DeleteFromTable.sh
+. InsertTable.sh
+. UpdateTable.sh
+. SelectFromTable.sh
+. ListTables.sh
+
 function TableMenu {
     while [ true ]
     do
