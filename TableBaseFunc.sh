@@ -62,10 +62,16 @@ function SelectFromTable {
 		    "Record" )
 			clear
 			# Define Primary Key index in meta table file
-			(( PKindex=$(awk -F: '{if($3=="Yes")print NR-1}' $1.meta) ))
+			(( PKindex=$(awk -F: '{if($3=="Yes")print NR}' $1.meta) -1  ))
+			echo $PKindex
 			read -p "Enter your Primary Key Value: " record
 			# print the existing record
-			awk -F: '{if($'$PKindex'=='$record')print $0}' $1
+			awk -F: -v c=$record '{if($'$PKindex'==c)print $0}' $1
+			echo $?
+			if [[ $? != 0 ]]
+			then
+				echo "Record Not Found "
+			fi
 			break;;
 			"Column")
 			clear
@@ -90,7 +96,7 @@ function SelectFromTable {
             echo "Please try again with the right name"
         fi
     else
-        echo "You Can Not Delete More Than One table"
+        echo "You Can Not Select More Than One table"
     fi
 }
 function InsertTable {
@@ -129,15 +135,19 @@ function InsertTable {
 				# Check PK input in table
 				if [[ ${ArrPK[x]} == "Yes" ]]
 				then
+						Arr=($(awk -F : '{print $'$x'}' $1))
 						# in case if it is primary key we have to make sure the value are unique
-						if [[ $TableParameter =~ ^[$(awk -F : '{print $'$x'}' $1)]$ ]]
-						then
-							echo "---------------------------------"
-							echo "Error: Value duplication in Primary Key! "
-							echo "---------------------------------"
-							echo "Please Try Again"
-							continue
-						fi
+						for i in ${Arr[*]}
+						do
+							if [[ $i -eq  $TableParameter ]]
+							then
+								echo "---------------------------------"
+								echo "Error: Value duplication in Primary Key! "
+								echo "---------------------------------"
+								echo "Please Try Again"
+								continue 2
+							fi
+						done
 				fi
 				if [[ $x == $column ]]
 				then
@@ -153,7 +163,7 @@ function InsertTable {
             echo "Please try again with the right name"
         fi
     else
-        echo "You Can Not Insert More Than One table"
+        echo "You Need to enter One table name"
     fi
 }
 
@@ -204,9 +214,11 @@ function UpdateTable {
 				 echo $where
 				if ! [[ $in == "" ]]
 				then
+					f=0
 					 read -p "Enter Column Name to Set: " Cond
 					 exist=$(awk  -F : -v c=$Cond '{if($1 == c)print $0 }' $1.meta)
 					 type=$(awk  -F : -v c=$Cond '{if($1 == c)print $2 }' $1.meta)
+					 PK=$(awk  -F : -v c=$Cond '{if($1 == c)print $3 }' $1.meta)
 					if ! [[ $exist == "" ]]
 					then
 						(( num1=$(awk  -F : -v c=$Cond '{if($1 == c)print NR }' $1.meta) -1 ))
@@ -219,17 +231,36 @@ function UpdateTable {
 						then
 						 	if ! [[ $NewVal =~ ^[0-9]+$ ]]
 							then
+								f=1
 							 	echo "Invailed Input"
 							fi
 						elif [[ $type == "Sting" ]]
 						then
 						 	if ! [[ $NewVal =~ ^[a-zA-Z]+$ ]]
 							then
+								f=1
 							 	echo "Invailed Input"
 				 			fi
 						fi
-						 sed -i ''$where's/'$old'/'$NewVal'/g' $1
-						 echo "update success"
+						if [[ $PK == "Yes" ]]
+						then
+							Arr=($(awk -F : '{print $'$num1'}' $1))
+						# in case if it is primary key we have to make sure the value are unique
+							for i in ${Arr[*]}
+							do
+								if [[ $i -eq  $NewVal ]]
+								then
+									f=1
+									echo "this value already exist"
+									break
+								fi
+							done
+						fi
+						if [[ $f == 0 ]]
+						then
+							sed -i ''$where's/'$old'/'$NewVal'/g' $1
+							echo "update success"
+						fi
 					else
 					 	echo "Target column does not exist"
 				 	fi
