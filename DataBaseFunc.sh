@@ -29,7 +29,7 @@ function createDatabase {
     then
         echo "Invalid Input"
     else
-	if [[ $1 =~ ^[./] ]]
+	if [[ $1 =~ ^[./] ]]      #### . directory already exist
 	then
 	    echo "Invalid Input"
         elif [ -d $Db ]
@@ -66,7 +66,6 @@ function dropDatabase {
 			 break;;
 		        *)
 			echo "Invalid Choice"
-			break;;
 	          esac
 	    done
         else

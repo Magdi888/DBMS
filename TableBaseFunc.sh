@@ -66,9 +66,9 @@ function SelectFromTable {
 			echo $PKindex
 			read -p "Enter your Primary Key Value: " record
 			# print the existing record
-			awk -F: -v c=$record '{if($'$PKindex'==c)print $0}' $1
-			echo $?
-			if [[ $? != 0 ]]
+			output=$(awk -F: -v c=$record '{if($'$PKindex'==c)print $0}' $1)
+			echo $output
+			if [[ $output == "" ]]
 			then
 				echo "Record Not Found "
 			fi
@@ -105,26 +105,26 @@ function InsertTable {
         if [ -f $1 ]
         then
 			(( column=$(awk 'END{print NR}' $1.meta) -1 ))
-			typeset -i x
-			x=1
+			typeset -i counter
+			counter=1
 			TableContent=""
 			ColumnSep=":"
 			RowSep="\n"
 			ArrField=($(cat $1.meta | awk -F: '{ print $1 }'))
 			ArrType=($(cat $1.meta | awk -F: '{ print $2 }'))
 			ArrPK=($(cat $1.meta | awk -F: '{ print $3 }'))
-			while [[ $x -le $column ]]
+			while [[ $counter -le $column ]]
 			do
-				read -p "Enter Value for parameter ${ArrField[x]} :${ArrType[x]}:" TableParameter
+				read -p "Enter Value for parameter ${ArrField[counter]} :${ArrType[counter]}:" TableParameter
 				# Check input type
-				if [[ ${ArrType[x]} == "Integer" ]]
+				if [[ ${ArrType[counter]} == "Integer" ]]
 				then
 					if ! [[ $TableParameter =~ ^[0-9]+$ ]]
 					then 
 						echo "Invalid Integer"
 						continue
 					fi
-				elif [[ ${ArrType[x]} == "String" ]]
+				elif [[ ${ArrType[counter]} == "String" ]]
 				then
 					if ! [[ $TableParameter =~ ^[a-zA-Z]+$ ]]
 					then
@@ -133,9 +133,9 @@ function InsertTable {
 					fi
 				fi
 				# Check PK input in table
-				if [[ ${ArrPK[x]} == "Yes" ]]
+				if [[ ${ArrPK[counter]} == "Yes" ]]
 				then
-						Arr=($(awk -F : '{print $'$x'}' $1))
+						Arr=($(awk -F : '{print $'$counter'}' $1))
 						# in case if it is primary key we have to make sure the value are unique
 						for i in ${Arr[*]}
 						do
@@ -149,13 +149,13 @@ function InsertTable {
 							fi
 						done
 				fi
-				if [[ $x == $column ]]
+				if [[ $counter == $column ]]
 				then
 					TableContent+=$TableParameter
 				else
 					TableContent+=$TableParameter$ColumnSep
 				fi
-				(( x++ ))
+				(( counter++ ))
 			done
 			echo  "$TableContent" >> $1 
         else
