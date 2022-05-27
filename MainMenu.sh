@@ -13,16 +13,14 @@ function mainmenu {
 				
 					clear
 					echo "___________________________________________"
-					echo "type Database Name please"
-					read  dbName
+					read -p "Enter Database Name please: " dbName 
 					createDatabase $dbName
 					echo "___________________________________________"
 					break ;;
 				"Connect to Database" )
 					clear
 					echo "___________________________________________"
-					echo "Enter a database name to connect to "
-					read  dbName
+					read -p "Enter a database name to connect: " dbName
 					echo "___________________________________________"
 					connectToDatabase $dbName
 					echo "___________________________________________"
@@ -38,8 +36,7 @@ function mainmenu {
 				"Drop Database" )
 					clear
 					echo "___________________________________________"
-					echo "Enter a databse name you want to drop"
-					read  dbName
+					read -p  "Enter a database name you want to drop: " dbName
 					echo "___________________________________________"
 					dropDatabase $dbName
 					echo "___________________________________________"
@@ -50,7 +47,7 @@ function mainmenu {
 				* )
 					clear
 					echo "___________________________________________"
-					echo "This is not a valid choice"
+					echo "Invalid Choice"
 					echo "___________________________________________"
 					break ;;
 			esac

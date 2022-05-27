@@ -15,7 +15,7 @@ function connectToDatabase {
     Db="DB/$1"
     if [ -d $Db ]
     then
-        echo "Connect to $1"
+        echo "$1 DataBase Connected"
         cd $Db
         TableMenu 
     else
