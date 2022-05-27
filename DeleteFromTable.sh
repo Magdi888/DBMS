@@ -5,18 +5,21 @@ function DeleteFromTable {
         if [ -f $1 ]
         then
 			read -p "Enter the Column Name: " ColName
+			# Check column exist, if existed set the row meta data of it
 			exist=$(awk  -F : -v c=$ColName '{if($1 == c)print $0 }' $1.meta)
 			if ! [[ $exist == "" ]]
 			then
-				 read -p "Enter Delete Condition: " Cond
-				 (( ColumnNum=$(awk  -F : -v c=$ColName '{if($1 == c)print NR }' $1.meta) -1 ))
-				 Arr=($(awk -F : -v x=$Cond '{if($'$ColumnNum' == x) print NR}' $1)) ####array of [record numbers of condition value]
-				 if ! [[ ${Arr[*]} == "" ]]
+				 read -p "Enter Delete Condition Value: " ConditionValue
+				 # get the column index in  meta data file
+				 (( ColumnIndex=$(awk  -F : -v c=$ColName '{if($1 == c)print NR }' $1.meta) -1 ))
+				 # using column index in meta file -> check if the value existed in any line on data file
+				 Value=($(awk -F : -v x=$ConditionValue '{if($'$ColumnIndex' == x) print NR}' $1)) 
+				 if ! [[ ${Value[*]} == "" ]]
 				 then
-				 	for (( i =${#Arr[*]}-1;i>=0;i-- ))
+				 	for (( i =${#Value[*]}-1;i>=0;i-- ))
 					 do
-				 		sed -i ''${Arr[i]}'d' $1
-						echo "Row ${Arr[i]} has value = $Cond is deleted"
+				 		sed -i ''${Value[i]}'d' $1
+						echo "Row ${Value[i]} has value = $ConditionValue is deleted"
 					done
 				 else
 				 	echo "Value not found"

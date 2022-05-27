@@ -1,16 +1,18 @@
 #!/bin/bash
 function DropTable {
     TableName=$1
+	# check if you enter only one table
     if [ $# -eq 1 ]
     then
+		# check if table is existed
         if [ -f $TableName ]
         then
 	    echo "___________________________________________"
 	    echo "---- Do you want to delete $1 ? ----"
 	    echo "___________________________________________"
-	    select tx in "Yes" "No"
+	    select Deleted in "Yes" "No"
 	    do
-         	case $tx in
+         	case $Deleted in
 		    "Yes")
            		rm -r $1 $1.meta
            		echo "$1 is deleted successfully"

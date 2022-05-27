@@ -22,12 +22,12 @@ function CreateTable {
 }
 
 function CreateTableValue {
-    read -p "Enter Column Number: " ColumnNumber
+    read -p "Enter Number of columns: " NumbOfColumn
     # Check if it is a number
-    if [[ $ColumnNumber =~ ^[0-9]+$ ]]
+    if [[ $NumbOfColumn =~ ^[0-9]+$ ]]
     then
         # if it is not equal to zero
-	    if [[ $ColumnNumber != 0 ]]
+	    if [[ $NumbOfColumn != 0 ]]
 	    then
 
 # create inital parameters
@@ -36,7 +36,7 @@ function CreateTableValue {
     rowSperator="\n"
     ColumnPK=""
     metaData="Field"$columnDelimiter"Type"$columnDelimiter"PK"
-    while [[ counter -le ColumnNumber ]]
+    while [[ counter -le NumbOfColumn ]]
     do
         read -p "Enter column Name $counter : " ColumnName
 	if [[ $ColumnName =~ ^[a-zA-Z] ]]
@@ -96,11 +96,11 @@ function CreateTableValue {
         echo -e $metaData >> $1.meta
     fi
     else
-	    echo "ColumnNumber Can Not Be Zero "
+	    echo "Number of columns Can Not Be Zero "
 	    CreateTableValue $1
     fi
     else
-	    echo "ColumnNumber Must Be Number "
+	    echo "Number of columns Must Be Number "
 	    CreateTableValue $1
     fi
 

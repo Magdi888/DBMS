@@ -1,5 +1,0 @@
-Field:Type:PK
-id:Integer:Yes
-name:String:
-age:Integer:
-place:String:

@@ -49,8 +49,10 @@ function createDatabase {
         elif [ -d $Db ]
         then
             echo "$1 already exists"
+		# check if the first character is string
         elif [[ $1 =~ ^[a-zA-Z] ]]
 	    then
+			
 	        mkdir -p $Db
 	        echo " $1 Data Base is Created"
         else

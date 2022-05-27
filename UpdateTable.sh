@@ -9,16 +9,16 @@ function UpdateTable {
 			if ! [[ $exist == "" ]]
 			then
 				(( ConditionColNum=$(awk  -F : -v c=$ColName '{if($1 == c)print NR }' $1.meta) -1 ))
-				 read -p "Enter the Value Condition : " Val
-				 ValExist=$(awk  -F : -v c=$Val '{if($'$ConditionColNum' == c)print $0 }' $1)
-				 ConditionValPlace=($(awk -F : -v c=$Val '{if($'$ConditionColNum' == c)print NR }' $1))
+				read -p "Enter the Value Condition : " Val
+				ValExist=$(awk  -F : -v c=$Val '{if($'$ConditionColNum' == c)print $0 }' $1)
+				ConditionValPlace=($(awk -F : -v c=$Val '{if($'$ConditionColNum' == c)print NR }' $1))
 				if ! [[ $ValExist == "" ]]
 				then
 					PassFlag=0
-					 read -p "Enter Column Name to Set: " ColToSet
-					 exist=$(awk  -F : -v c=$ColToSet '{if($1 == c)print $0 }' $1.meta)
-					 type=$(awk  -F : -v c=$ColToSet '{if($1 == c)print $2 }' $1.meta)
-					 PK=$(awk  -F : -v c=$ColToSet '{if($1 == c)print $3 }' $1.meta)
+					read -p "Enter Column Name to Set: " ColToSet
+					exist=$(awk  -F : -v c=$ColToSet '{if($1 == c)print $0 }' $1.meta)
+					type=$(awk  -F : -v c=$ColToSet '{if($1 == c)print $2 }' $1.meta)
+					PK=$(awk  -F : -v c=$ColToSet '{if($1 == c)print $3 }' $1.meta)
 					if ! [[ $exist == "" ]]
 					then
 						(( ColToSetNum=$(awk  -F : -v c=$ColToSet '{if($1 == c)print NR }' $1.meta) -1 ))
