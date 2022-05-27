@@ -57,7 +57,9 @@ function UpdateTable {
 							for j in ${ConditionValPlace[*]}
 							do
 								old=$(awk -F : -v c=$j '{if(NR == c) print $'$ColToSetNum'}' $1)
-								sed -i ''$j's/'$old'/'$NewVal'/g' $1
+								awk -F : -v c=$j 'BEGIN { OFS = ":"; ORS = "\n" }{if(NR == c) $'$ColToSetNum'="'$NewVal'"; print $0}' $1 > temp
+								cat temp > $1 
+								rm temp
 							done
 							echo "update success"
 						fi
