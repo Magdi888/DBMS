@@ -20,7 +20,20 @@ function connectToDatabase {
         TableMenu 
     else
         echo "This database does not exist"
-	createDatabase $1
+        echo "Do you want to create $1 ?"
+	    echo "___________________________________________"
+	    select i in "Yes" "No"
+	    do
+         	 case $i in
+		    "Yes")
+           		createDatabase $1
+			 break;;
+		     "No")
+			 break;;
+		        *)
+			echo "Invalid Choice"
+	          esac
+	    done
     fi
 }
 
@@ -30,18 +43,18 @@ function createDatabase {
     then
         echo "Invalid Input"
     else
-	if [[ $1 =~ ^[./] ]]      #### . directory already exist
-	then
+	    if [[ $1 =~ ^[./] ]]      #### . directory already exist
+	    then
 	    echo "Invalid Input"
         elif [ -d $Db ]
         then
             echo "$1 already exists"
         elif [[ $1 =~ ^[a-zA-Z] ]]
-	then
-	    mkdir -p $Db
-	    echo " $1 Data Base is Created"
-         else
-	    echo "Invalid Input"
+	    then
+	        mkdir -p $Db
+	        echo " $1 Data Base is Created"
+        else
+	        echo "Invalid Input"
 	    
         fi
     fi

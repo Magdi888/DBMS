@@ -15,7 +15,6 @@ function CreateTable {
 	    then
 	    CreateTableValue $1
 	    echo " $1 Table is Created"
-	    pwd
         else
 	    echo "Invalid Input"
         fi

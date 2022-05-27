@@ -34,10 +34,11 @@ function SelectFromTable {
 			read -p "Enter your Primary Key Value: " record
 			# print the existing record
 			output=$(awk -F: -v c=$record '{if($'$PKindex'==c)print $0}' $1)
-			echo $output
 			if [[ $output == "" ]]
 			then
 				echo "Record Not Found "
+			else
+				echo $output
 			fi
 			break;;
 			"Column")
