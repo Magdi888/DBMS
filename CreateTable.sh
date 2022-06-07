@@ -79,7 +79,7 @@ function CreateTableValue {
                 done
             else
             # Code is designed for only one PK per table in case if you select primary key once, you don't have to go to select menu again
-                metaData+=$rowSperator$ColumnName$columnDelimiter$ColumnType$columnDelimiter""
+                metaData+=$rowSperator$ColumnName$columnDelimiter$ColumnType$columnDelimiter"No"
             fi
             OldName=$ColumnName
             (( counter++ ))
