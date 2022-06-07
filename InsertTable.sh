@@ -18,7 +18,6 @@ function InsertTable {
 			ArrField=($(cat $1.meta | awk -F: '{ print $1 }'))
 			ArrType=($(cat $1.meta | awk -F: '{ print $2 }'))
 			ArrPK=($(cat $1.meta | awk -F: '{ print $3 }'))
-
 			while [[ $counter -le $ColumnNumbers ]]
 			do
 				read -p "Enter Value for parameter ${ArrField[counter]} (${ArrType[counter]}): " TableParameter
@@ -41,7 +40,7 @@ function InsertTable {
 					fi
 				fi
 				# Check PK input in table
-				if [[ ${PK_ValuesPK[counter]} == "Yes" ]]
+				if [[ ${ArrPK[counter]} == "Yes" ]]
 				then
 					# 
 					PK_Values=($(awk -F : '{print $'$counter'}' $1))

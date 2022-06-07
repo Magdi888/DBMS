@@ -1,0 +1,4 @@
+Field:Type:PK
+name:String:No
+age:Integer:No
+id:Integer:Yes

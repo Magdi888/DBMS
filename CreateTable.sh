@@ -34,59 +34,66 @@ function CreateTableValue {
     (( counter=1 ))
     columnDelimiter=":"
     rowSperator="\n"
-    ColumnPK=""
+    ColumnPK="No"
     metaData="Field"$columnDelimiter"Type"$columnDelimiter"PK"
     while [[ counter -le NumbOfColumn ]]
     do
         read -p "Enter column Name $counter : " ColumnName
-	if [[ $ColumnName =~ ^[a-zA-Z] ]]
-	then
-        # Select variable type
-        echo "----Select Column Type----"
-        select x in "Integer" "String"
-        do
-            case $x in
-                "Integer" ) 
-                ColumnType="Integer"
-                break;;
-                "String" ) 
-                ColumnType="String"
-                break;;
-                * ) 
-                echo "Invalid Type"
-            esac
-        done
-        # Set the primary key
-        if [[ $ColumnPK == "" ]]
+    if ! [[ $OldName == $ColumnName ]]
+    then
+        if [[ $ColumnName =~ ^[a-zA-Z] ]]
         then
-            echo " Is it a PK? "
-            select y in "Yes" "No"
+            # Select variable type
+            echo "----Select Column Type----"
+            select x in "Integer" "String"
             do
-                case $y in
-                    "Yes" ) 
-                    ColumnPK="Yes"
-                    metaData+=$rowSperator$ColumnName$columnDelimiter$ColumnType$columnDelimiter$ColumnPK
+                case $x in
+                    "Integer" ) 
+                    ColumnType="Integer"
                     break;;
-                    "No" ) 
-                    ColumnPK=""
-                    metaData+=$rowSperator$ColumnName$columnDelimiter$ColumnType$columnDelimiter$ColumnPK
+                    "String" ) 
+                    ColumnType="String"
                     break;;
                     * ) 
-                    echo "Invalid"
+                    echo "Invalid Type"
                 esac
             done
+            # Set the primary key
+            if [[ $ColumnPK == "No" ]]
+            then
+                echo " Is it a PK? "
+                select y in "Yes" "No"
+                do
+                    case $y in
+                        "Yes" ) 
+                        ColumnPK="Yes"
+                        metaData+=$rowSperator$ColumnName$columnDelimiter$ColumnType$columnDelimiter$ColumnPK
+                        break;;
+                        "No" ) 
+                        ColumnPK="No"
+                        metaData+=$rowSperator$ColumnName$columnDelimiter$ColumnType$columnDelimiter$ColumnPK
+                        break;;
+                        * ) 
+                        echo "Invalid"
+                    esac
+                done
+            else
+            # Code is designed for only one PK per table in case if you select primary key once, you don't have to go to select menu again
+                metaData+=$rowSperator$ColumnName$columnDelimiter$ColumnType$columnDelimiter""
+            fi
+            OldName=$ColumnName
+            (( counter++ ))
         else
-        # Code is designed for only one PK per table in case if you select primary key once, you don't have to go to select menu again
-            metaData+=$rowSperator$ColumnName$columnDelimiter$ColumnType$columnDelimiter""
+            echo "Column Name Must Be String"
+            continue
         fi
-        (( counter++ ))
-	else
-	    echo "Column Name Must Be String"
-	    continue
-	fi
+    else 
+        echo "There is column Has This Name"
+        continue
+    fi
     done
 # in case if user didn't set any primary key on any parameter -> it will loop back again 
-    if [[ $ColumnPK == "" ]]
+    if [[ $ColumnPK == "No" ]]
     then
         echo "There is No PK"
         echo "Insert your Data Again"

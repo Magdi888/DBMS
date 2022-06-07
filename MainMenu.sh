@@ -1,6 +1,7 @@
 #!/bin/bash
 . DataBaseFunc.sh
 mkdir -p DB
+PS1="$PS2"
 function mainmenu {
 	while [ true ]
 	do
