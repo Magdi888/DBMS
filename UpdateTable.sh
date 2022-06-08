@@ -40,7 +40,7 @@ function UpdateTable {
 						fi
 						if [[ $PK == "Yes" ]]
 						then
-							Arr=($(awk -F : '{print $'$ColToSetNum'}' $1
+							Arr=($(awk -F : '{print $'$ColToSetNum'}' $1))
 						# in case if it is primary key we have to make sure the value are unique
 							for i in ${Arr[*]}
 							do	
