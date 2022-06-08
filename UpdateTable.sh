@@ -40,11 +40,11 @@ function UpdateTable {
 						fi
 						if [[ $PK == "Yes" ]]
 						then
-							Arr=($(awk -F : '{print $'$ColToSetNum'}' $1))
+							Arr=($(awk -F : '{print $'$ColToSetNum'}' $1
 						# in case if it is primary key we have to make sure the value are unique
 							for i in ${Arr[*]}
-							do
-								if [[ $i -eq  $NewVal ]]
+							do	
+								if [[ $i ==  $NewVal ]]
 								then
 									PassFlag=1
 									echo "PrimaryKey, This Filed has the same value you entered"

@@ -47,7 +47,7 @@ function InsertTable {
 					# in case if it is primary key we have to make sure the value are unique
 					for i in ${PK_Values[*]}
 					do
-						if [[ $i -eq  $TableParameter ]]
+						if [[ $i ==  $TableParameter ]]
 						then
 							echo "---------------------------------"
 							echo "Error: Value duplication in Primary Key! "
