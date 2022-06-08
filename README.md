@@ -1,2 +1,3 @@
-DBMS-Using-Bash-Shell-Scripting
-Implementing a simple databases management system using Bash Shell scripting by @Magdi888 and @AhmedRezk95
+# DBMS-Using-Bash-Shell-Scripting #
+#### Implementing a simple databases management system using Bash Shell scripting by:
+@Magdi888 and @AhmedRezk95
